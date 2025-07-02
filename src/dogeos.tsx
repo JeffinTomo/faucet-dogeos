@@ -13,7 +13,6 @@ import { formatEther, createPublicClient, http } from "viem";
 import { BigNumber } from "bignumber.js";
 
 import { CustomButton } from "./components/CustomButton";
-import { addToast } from "@heroui/react";
 import * as cache from "./cache";
 
 const network = {
@@ -233,8 +232,7 @@ export default function DogeFaucet() {
                 success: true,
               })
             } catch (err) {
-              const title = err?.message || errMsg;
-              console.log("clamTestDoge err", title);
+              const title = errMsg;
               setResult({
                 title,
                 success: false,

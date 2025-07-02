@@ -21,9 +21,9 @@ function get(key: string) {
     return null;
   }
   // maybe keyNS could avoid conflict
-  let val: { data: any; type: string };
+  let val: { data: any; type: string } | null = null;
   try {
-    const data = window.localStorage.getItem(tempKey) || window.sessionStorage.getItem(tempKey);
+    const data: string = window.localStorage.getItem(tempKey) || window.sessionStorage.getItem(tempKey) || "";
     val = JSON.parse(data);
   } catch (err) {
     console.error(err);
@@ -56,10 +56,10 @@ function set(key: string, val: any, isTemp: boolean) {
     store.setItem(keyNS + key, data);
     return true;
   } catch (e) {
-    if (e.name.toUpperCase().indexOf("QUOTA") >= 0) {
-      window.localStorage.clear();
-      store.setItem(keyNS + key, data);
-    }
+    // if (e.name.toUpperCase().indexOf("QUOTA") >= 0) {
+    //   window.localStorage.clear();
+    //   store.setItem(keyNS + key, data);
+    // }
   }
 }
 
