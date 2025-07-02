@@ -1,2 +1,3 @@
-https://faucet.devnet.doge.xyz/# faucet-dogeos
 # faucet-dogeos
+https://faucet.devnet.doge.xyz/
+

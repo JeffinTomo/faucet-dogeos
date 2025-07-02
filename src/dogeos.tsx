@@ -1,4 +1,14 @@
-import React, { useEffect, useState } from "react";
+declare global {
+  interface Window {
+    grecaptcha?: {
+      getResponse: () => string;
+      reset: () => void;
+      // add other methods if you use them
+    };
+  }
+}
+
+import { useEffect, useState } from "react";
 import { formatEther, createPublicClient, http } from "viem";
 import { BigNumber } from "bignumber.js";
 
@@ -85,6 +95,11 @@ export default function DogeFaucet() {
 
   const clamTestDoge = async (address: string) => {
     const grecaptcha: any = window?.grecaptcha;
+
+    if (!grecaptcha) {
+      throw new Error("grecaptcha is not loaded");
+      return;
+    }
 
     const recaptchaResponse = grecaptcha?.getResponse();
     if (!recaptchaResponse) {
@@ -208,7 +223,7 @@ export default function DogeFaucet() {
                 title: `"Ð${amount} claimed successfully!"`,
                 color: "success",
               })
-            } catch (err) {
+            } catch (err: any) {
               addToast({
                 title: err?.message || errMsg,
                 color: "warning",
