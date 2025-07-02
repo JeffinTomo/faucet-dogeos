@@ -1,0 +1,93 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+  font-family: "Switzer";
+  padding: 0;
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+  height: 0px;
+  width: 0px;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 2px;
+  background: rgb(137, 137, 171, 0.2);
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 2px;
+  background: transparent;
+}
+
+.dogeos-faucet-banner {
+  margin: 0 15px;
+  border-radius: 4px;
+  background: url(./assets/banner.png) no-repeat 0 0;
+  background-size: 100% auto;
+  padding: 20px 20px 10px;
+  font-size: 16px;
+  line-height: 1.2;
+  color: #12122a;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.dogeos-faucet {
+  background: #f5f5fa url(./assets/bg.png) no-repeat 0 0;
+  background-size: 100% auto;
+}
+.dogeos-faucet-part {
+  margin: 15px;
+  border-radius: 15px;
+  background-color: #fff;
+  padding: 20px 20px 1px;
+  color: #616184;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.dogeos-faucet-part h2 {
+  font-size: 16px;
+  font-weight: 600;
+  color: #12122a;
+  margin-bottom: 12px;
+}
+.dogeos-faucet-part em {
+  color: #616184;
+  font-style: normal;
+  font-weight: 600;
+}
+.dogeos-faucet-part p {
+  margin-bottom: 12px;
+}
+.dogeos-faucet-part ol {
+  margin-left: 2rem;
+  list-style-type: disc;
+}
+.dogeos-faucet-part li {
+  margin-top: 6px;
+}
+.dogeos-faucet-balance {
+  padding: 10px 20px 20px;
+  margin-top: 80px;
+  text-align: center;
+}
+.dogeos-balance-value {
+  font-size: 28px;
+  font-weight: 600;
+  color: #12122a;
+  line-height: 1.2;
+  margin-top: 10px;
+}
+
+.dogeos-faucet-use {
+  padding-bottom: 1rem;
+}
