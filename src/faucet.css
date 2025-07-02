@@ -69,6 +69,7 @@ body {
   margin-bottom: 12px;
 }
 .dogeos-faucet-part ol {
+  padding: 0;
   margin-left: 2rem;
   list-style-type: disc;
 }
@@ -90,4 +91,27 @@ body {
 
 .dogeos-faucet-use {
   padding-bottom: 1rem;
+}
+
+.g-recaptcha{
+  width: 290px;
+  height: 76px;
+  overflow: hidden;
+  margin: 0 auto 10px;
+  border-right:1px solid #ccc;
+}
+
+.g-recaptcha iframe{
+  width: 360px !important;
+}
+.dogeos-faucet-btn{
+  margin: 0px 20px 50px;
+}
+
+
+.bg-primary{
+  background-color: #FCD436;
+  border:none;
+  font-size: 16px;
+  font-weight: 600;
 }

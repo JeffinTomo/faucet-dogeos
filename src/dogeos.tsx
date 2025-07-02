@@ -12,9 +12,9 @@ import { useEffect, useState } from "react";
 import { formatEther, createPublicClient, http } from "viem";
 import { BigNumber } from "bignumber.js";
 
-import "./faucet.css";
 import { CustomButton } from "./components/CustomButton";
 import { addToast } from "@heroui/react";
+import * as cache from "./cache";
 
 const network = {
   chainId: 221122420,
@@ -71,10 +71,17 @@ export default function DogeFaucet() {
   const [balance, setBalance] = useState<string>("0");
   const [address, setAddress] = useState<string>("");
   const [isClaimed, setIsClaimed] = useState(false);
+  const [result, setResult] = useState<any>(null);
 
   useEffect(() => {
     const currentAddress = new URLSearchParams(window.location.search).get("address") || "";
     setAddress(currentAddress);
+
+
+    const lastClaimTime = cache.get("lastClaimTime") || 0;
+    if (Date.now() - lastClaimTime < 24 * 60 * 60 * 1000) {
+      setIsClaimed(true);
+    }
   }, []);
 
   useEffect(() => {
@@ -87,6 +94,7 @@ export default function DogeFaucet() {
         })
         const balance = new BigNumber(formatEther(res)).toNumber().toFixed(3);
         setBalance(balance);
+        console.log("balance", { balance, address });
       } catch (error) {
         console.error("Failed to getBalance:", error);
       }
@@ -153,7 +161,6 @@ export default function DogeFaucet() {
         <div className="dogeos-balance-value">
           ~{balance} DOGE
         </div>
-        <div>{address}</div>
       </div>
 
       <div id="dogeos-faucet-intro" className="dogeos-faucet-part dogeos-faucet-intro">
@@ -189,50 +196,58 @@ export default function DogeFaucet() {
         </div>
       </div>
 
-
-      <div
-        style={{
-          width: "310px",
-          margin: "0 auto",
-        }}
+      {!isClaimed && <div
         className="g-recaptcha"
         data-sitekey="6LcKSe4qAAAAAKsAzMIWQNd5JBhpv5lX4dPVaMyb"
-      ></div>
+      ></div>}
 
-      <div className="h-[120px]"></div>
+      {result && <div className="dogeos-faucet-result">
+        {result.success ? <div className="text-center text-xs text-[green]">
+          {result.title}
+        </div> : <div className="text-center text-xs text-[red]">
+          {result.title}
+        </div>}
+        <div className="h-[10px]"></div>
+      </div>}
 
-      <div className="fixed bottom-0 left-0 right-0 w-full p-4 pb-8 pt-0 text-center ring-0">
-        <CustomButton
+      <div className="dogeos-faucet-btn">
+        {isClaimed ? <div className="text-center text-[gray]">Only one claim per 24 hours.</div> : <CustomButton
           color="primary"
           className="tomo-btn-approve w-full"
-          isDisabled={isClaimed}
           onPress={async () => {
             const errMsg = "claim test token err, please retry.";
             try {
               const res = await clamTestDoge(address);
               console.log("clamTestDoge", res);
               if (!res.success) {
-                addToast({
+                setResult({
                   title: errMsg,
-                  color: "warning",
-                })
+                  success: false,
+                });
                 return;
               }
+              cache.set("lastClaimTime", Date.now(), true);
               setIsClaimed(true);
-              addToast({
+              setResult({
                 title: `"Ð${amount} claimed successfully!"`,
-                color: "success",
+                success: true,
               })
-            } catch (err: any) {
-              addToast({
-                title: err?.message || errMsg,
-                color: "warning",
+            } catch (err) {
+              const title = err?.message || errMsg;
+              console.log("clamTestDoge err", title);
+              setResult({
+                title,
+                success: false,
               })
+            } finally {
+              setTimeout(() => {
+                setResult(null);
+              }, 10000);
             }
           }}
         >
-          {isClaimed ? "Limit reached. Please try tomorrow" : `Claim Ɖ ${amount} now!`}
-        </CustomButton>
+          Claim Ɖ ${amount} now!
+        </CustomButton>}
       </div>
     </div>
   );
