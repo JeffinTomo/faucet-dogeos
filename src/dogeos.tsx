@@ -3,6 +3,7 @@ declare global {
     grecaptcha?: {
       getResponse: () => string;
       reset: () => void;
+      ready: (callback: () => void) => void;
       // add other methods if you use them
     };
   }
