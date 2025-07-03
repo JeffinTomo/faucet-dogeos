@@ -182,7 +182,7 @@ export default function DogeFaucet() {
   return (
     <div id="dogeos-faucet" className="dogeos-faucet overflow-y-auto scrollbar-hide">
       <div id="dogeos-balance" className="dogeos-faucet-part dogeos-faucet-balance">
-        <div>My $DOGE (test token) balance</div>
+        <div>My $DOGE (dev token) balance</div>
         <div className="dogeos-balance-value">
           ~{balance} DOGE
         </div>
@@ -200,14 +200,14 @@ export default function DogeFaucet() {
       </div>
 
       <div id="dogeos-faucet-amount" className="dogeos-faucet-part dogeos-faucet-amount">
-        <h2>🐶 How Much Testnet DOGE Can I Get?</h2>
+        <h2>🐶 How Much Devnet DOGE Can I Get?</h2>
         <p>
           You can request <em>{amount} ÐOGE per day</em>. No real funds are involved — it&apos;s just for testing.
         </p>
       </div>
 
       <div id="dogeos-use" className="dogeos-faucet-part dogeos-faucet-use">
-        <h2>🧪 What Can I Do With Testnet DOGE?</h2>
+        <h2>🧪 What Can I Do With Devnet DOGE?</h2>
         <div>
           With your devnet ÐOGE, you can:
           <ol>
@@ -240,7 +240,7 @@ export default function DogeFaucet() {
           color="primary"
           className="tomo-btn-approve w-full"
           onPress={async () => {
-            const errMsg = "claim test token err, please retry.";
+            const errMsg = "claim dev token err, please retry.";
             try {
               const res = await clamTestDoge(address);
               console.log("clamTestDoge", res);
