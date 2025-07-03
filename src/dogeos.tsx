@@ -65,12 +65,28 @@ function createWalletClient(network: any) {
   return rpcClient;
 }
 
+function loadJsDynamic(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    if (document.querySelector(`script[src="${src}"]`)) {
+      resolve();
+      return;
+    }
+    const script = document.createElement("script");
+    script.src = src;
+    script.async = true;
+    script.onload = () => resolve();
+    script.onerror = () => reject(new Error(`Failed to load script: ${src}`));
+    document.body.appendChild(script);
+  });
+}
+
 export default function DogeFaucet() {
   const amount = 40;
   const [balance, setBalance] = useState<string>("0");
   const [address, setAddress] = useState<string>("");
   const [isClaimed, setIsClaimed] = useState(false);
   const [result, setResult] = useState<any>(null);
+  const [isRecaptchaLoaded, setIsRecaptchaLoaded] = useState(false);
 
   useEffect(() => {
     const currentAddress = new URLSearchParams(window.location.search).get("address") || "";
@@ -80,7 +96,16 @@ export default function DogeFaucet() {
     const lastClaimTime = cache.get("lastClaimTime") || 0;
     if (Date.now() - lastClaimTime < 24 * 60 * 60 * 1000) {
       setIsClaimed(true);
+      return;
     }
+
+    const lib = "https://www.google.com/recaptcha/api.js?v=" + Date.now();
+    loadJsDynamic(lib).then(() => {
+      console.log("loadJsDynamic", window.grecaptcha);
+      window?.grecaptcha?.ready(() => {
+        setIsRecaptchaLoaded(true);
+      });
+    }).catch(console.error);
   }, []);
 
   useEffect(() => {
@@ -165,11 +190,11 @@ export default function DogeFaucet() {
       <div id="dogeos-faucet-intro" className="dogeos-faucet-part dogeos-faucet-intro">
         <h2>🚰 What is a faucet?</h2>
         <p>
-          A faucet lets you claim free tokens for testing purposes on a <em>testnet</em> — a blockchain environment that
+          A faucet lets you claim free tokens for testing purposes on a <em>devnet</em> — a blockchain environment that
           simulates real transactions without using real assets.{" "}
         </p>
         <p>
-          These testnet tokens are <em>not real DOGE</em> and <em>have no monetary value</em>.
+          These devnet tokens are <em>not real DOGE</em> and <em>have no monetary value</em>.
         </p>
       </div>
 
@@ -183,7 +208,7 @@ export default function DogeFaucet() {
       <div id="dogeos-use" className="dogeos-faucet-part dogeos-faucet-use">
         <h2>🧪 What Can I Do With Testnet DOGE?</h2>
         <div>
-          With your testnet ÐOGE, you can:
+          With your devnet ÐOGE, you can:
           <ol>
             <li>Try out new features safely</li>
             <li>Interact with dApps without financial risk</li>
@@ -196,7 +221,7 @@ export default function DogeFaucet() {
       </div>
 
       {!isClaimed && <div
-        className="g-recaptcha"
+        className={"g-recaptcha " + (isRecaptchaLoaded ? "g-recaptcha-show" : "")}
         data-sitekey="6LcKSe4qAAAAAKsAzMIWQNd5JBhpv5lX4dPVaMyb"
       ></div>}
 
