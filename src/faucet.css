@@ -9,6 +9,10 @@ body {
   margin: 0;
   background: #f5f5fa;
 }
+h1,h2,h3,h4,h5,h6{
+  margin: 0;
+  padding: 0;
+}
 
 ::-webkit-scrollbar {
   height: 0px;
@@ -45,21 +49,23 @@ body {
 .dogeos-faucet {
   background: #f5f5fa url(./assets/bg.png) no-repeat 0 0;
   background-size: 100% auto;
+  max-width: 800px;
+  margin: 0 auto;
 }
 .dogeos-faucet-part {
-  margin: 15px;
+  margin: 12px 15px;
   border-radius: 15px;
   background-color: #fff;
-  padding: 20px 20px 1px;
+  padding: 15px 20px 1px;
   color: #616184;
-  font-size: 14px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.35;
 }
 .dogeos-faucet-part h2 {
   font-size: 16px;
   font-weight: 600;
   color: #12122a;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
 }
 .dogeos-faucet-part em {
   color: #616184;
@@ -78,12 +84,13 @@ body {
   margin-top: 6px;
 }
 .dogeos-faucet-balance {
-  padding: 10px 20px 20px;
+  padding: 12px 20px;
   margin-top: 80px;
   text-align: center;
+  background-color: rgba(255, 255, 255, 0.8);
 }
 .dogeos-balance-value {
-  font-size: 28px;
+  font-size: 26px;
   font-weight: 600;
   color: #12122a;
   line-height: 1.2;
@@ -105,20 +112,29 @@ body {
   /* border-right:1px solid #ccc; */
   height: 76px;
   opacity: 1;
-  transition: height 1s ease-in-out, opacity 1.4s ease-in-out;
+  transition: height 0.3s ease-in-out, opacity 0.4s ease-in-out;
 }
 
 .g-recaptcha iframe{
   width: 303px !important;
+  margin-left: 15px;
 }
 .dogeos-faucet-btn{
   margin: 0px 20px 50px;
 }
-
 
 .bg-primary{
   background-color: #FCD436;
   border:none;
   font-size: 16px;
   font-weight: 600;
+  cursor: pointer;
+}
+
+.tomo-btn-disabled{
+  background-color: #EBEBF4;
+  border:none;
+  font-size: 16px;
+  font-weight: 600;
+  color: #8989AB;
 }

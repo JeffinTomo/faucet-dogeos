@@ -1,5 +1,6 @@
 declare global {
   interface Window {
+    parent: Window;
     grecaptcha?: {
       getResponse: () => string;
       reset: () => void;
@@ -85,6 +86,7 @@ export default function DogeFaucet() {
   const amount = 42.069;
   const [balance, setBalance] = useState<string>("0");
   const [address, setAddress] = useState<string>("");
+  const [recaptchaCode, setRecaptchaCode] = useState<string>("placeholder");
   const [isClaimed, setIsClaimed] = useState(false);
   const [result, setResult] = useState<any>(null);
   const [isRecaptchaLoaded, setIsRecaptchaLoaded] = useState(false);
@@ -93,8 +95,8 @@ export default function DogeFaucet() {
     const currentAddress = new URLSearchParams(window.location.search).get("address") || "";
     setAddress(currentAddress);
 
-
-    const lastClaimTime = cache.get("lastClaimTime") || 0;
+    const claimTimeCacheKey = `lastClaimTime_${currentAddress.toLowerCase()}`;
+    const lastClaimTime = cache.get(claimTimeCacheKey) || 0;
     if (Date.now() - lastClaimTime < 24 * 60 * 60 * 1000) {
       setIsClaimed(true);
       return;
@@ -102,7 +104,6 @@ export default function DogeFaucet() {
 
     const lib = "https://www.google.com/recaptcha/api.js?v=" + Date.now();
     loadJsDynamic(lib).then(() => {
-      console.log("loadJsDynamic", window.grecaptcha);
       window?.grecaptcha?.ready(() => {
         setIsRecaptchaLoaded(true);
       });
@@ -119,7 +120,6 @@ export default function DogeFaucet() {
         })
         const balance = new BigNumber(formatEther(res)).toNumber().toFixed(3);
         setBalance(balance);
-        console.log("balance", { balance, address });
       } catch (error) {
         console.error("Failed to getBalance:", error);
       }
@@ -179,12 +179,23 @@ export default function DogeFaucet() {
       });
   };
 
+  if (!address) {
+    return (
+      <div className="dogeos-faucet-part">
+        <div className="text-center text-xs text-[red]">
+          no evm address
+        </div>
+        <div className="h-[10px]"></div>
+      </div>
+    )
+  }
+
   return (
     <div id="dogeos-faucet" className="dogeos-faucet overflow-y-auto scrollbar-hide">
       <div id="dogeos-balance" className="dogeos-faucet-part dogeos-faucet-balance">
         <div>My $DOGE (dev token) balance</div>
         <div className="dogeos-balance-value">
-          ~{balance} DOGE
+          Ɖ {balance}
         </div>
       </div>
 
@@ -226,7 +237,7 @@ export default function DogeFaucet() {
         data-sitekey="6LcKSe4qAAAAAKsAzMIWQNd5JBhpv5lX4dPVaMyb"
       ></div>}
 
-      {result && <div className="dogeos-faucet-result">
+      {result && window === window.parent && <div className="dogeos-faucet-result">
         {result.success ? <div className="text-center text-xs text-[green]">
           {result.title}
         </div> : <div className="text-center text-xs text-[red]">
@@ -236,11 +247,17 @@ export default function DogeFaucet() {
       </div>}
 
       <div className="dogeos-faucet-btn">
-        {isClaimed ? <div className="text-center text-[gray]">Only one claim per 24 hours.</div> : <CustomButton
+        {isClaimed ? <CustomButton
+          color="secondary"
+          isDisabled={true}
+          className="tomo-btn-disabled w-full">
+          Limit reached. Please try tomorrow
+        </CustomButton> : <CustomButton
           color="primary"
-          className="tomo-btn-approve w-full"
+          className={"tomo-btn-approve w-full " + (!recaptchaCode ? "tomo-btn-disabled" : "")}
+          isDisabled={!recaptchaCode}
           onPress={async () => {
-            const errMsg = "claim dev token err, please retry.";
+            const errMsg = "claim dev token error, please retry.";
             try {
               const res = await clamTestDoge(address);
               console.log("clamTestDoge", res);
@@ -249,20 +266,34 @@ export default function DogeFaucet() {
                   title: errMsg,
                   success: false,
                 });
+                window.parent.postMessage({
+                  title: errMsg,
+                  success: false,
+                }, '*');
                 return;
               }
-              cache.set("lastClaimTime", Date.now(), true);
+              const claimTimeCacheKey = `lastClaimTime_${address.toLowerCase()}`;
+              cache.set(claimTimeCacheKey, Date.now(), false);
               setIsClaimed(true);
               setResult({
                 title: `"Ð${amount} claimed successfully!"`,
                 success: true,
-              })
+              });
+              window.parent.postMessage({
+                title: `"Ð${amount} claimed successfully!"`,
+                success: true,
+              }, '*');
             } catch (err) {
-              const title = errMsg;
+              console.log("faucet err", err);
+              const title = err?.message || errMsg;
               setResult({
                 title,
                 success: false,
-              })
+              });
+              window.parent.postMessage({
+                title,
+                success: false,
+              }, '*');
             } finally {
               setTimeout(() => {
                 setResult(null);
