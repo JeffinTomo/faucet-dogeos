@@ -82,7 +82,7 @@ function loadJsDynamic(src: string): Promise<void> {
 }
 
 export default function DogeFaucet() {
-  const amount = 40;
+  const amount = 42.069;
   const [balance, setBalance] = useState<string>("0");
   const [address, setAddress] = useState<string>("");
   const [isClaimed, setIsClaimed] = useState(false);
