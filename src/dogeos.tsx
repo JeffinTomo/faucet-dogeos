@@ -1,6 +1,5 @@
 declare global {
   interface Window {
-    parent: Window;
     grecaptcha?: {
       getResponse: () => string;
       reset: () => void;
@@ -106,6 +105,7 @@ export default function DogeFaucet() {
     loadJsDynamic(lib).then(() => {
       window?.grecaptcha?.ready(() => {
         setIsRecaptchaLoaded(true);
+        setRecaptchaCode(window?.grecaptcha?.getResponse() || "");
       });
     }).catch(console.error);
   }, []);
@@ -283,7 +283,7 @@ export default function DogeFaucet() {
                 title: `"Ð${amount} claimed successfully!"`,
                 success: true,
               }, '*');
-            } catch (err) {
+            } catch (err: any) {
               console.log("faucet err", err);
               const title = err?.message || errMsg;
               setResult({
