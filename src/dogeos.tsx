@@ -105,7 +105,7 @@ export default function DogeFaucet() {
     loadJsDynamic(lib).then(() => {
       window?.grecaptcha?.ready(() => {
         setIsRecaptchaLoaded(true);
-        setRecaptchaCode(window?.grecaptcha?.getResponse() || "");
+        setRecaptchaCode(window?.grecaptcha?.getResponse() || "newRecaptcha");
       });
     }).catch(console.error);
   }, []);
